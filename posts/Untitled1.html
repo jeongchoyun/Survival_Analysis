@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Survival_Analysis - “생존 분석(survival or time-to-event outcomes)에서 경향 점수 방법 사용: 무작위 실험과 유사한 효과 측정 보고”</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Survival_Analysis</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html" rel="" target="">
+ <span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">“생존 분석(survival or time-to-event outcomes)에서 경향 점수 방법 사용: 무작위 실험과 유사한 효과 측정 보고”</h1>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p><code>-</code> 이 글에서는 두 가지 다른 경향성 점수 방법(매칭, IPTW)이 무작위 대조 임상시험에서 자주 보고되는 효과 측정치를 추정하는 데 사용될 수 있다고 설명합니다 - 효과 측정치 &gt; (i) 주변 생존 곡선 : 모든 대상에게 치료가 적용되었을 때 또는 모든 대상에게 치료가 적용되지 않았을 때 인구 내에서의 생존을 설명<br>
+&gt; (ii) 주변 위험 비율</p>
+<p><em>경향성 점수 방법을 사용하면 시간-사건 결과가 있는 무작위 대조 임상시험에서 보고되는 효과 측정치를 재현할 수 있습니다: 사건 발생 확률의 절대 및 상대적 감소 모두를 결정할 수 있습니다</em></p>
+<section id="introduction" class="level3">
+<h3 class="anchored" data-anchor-id="introduction">1. Introduction</h3>
+<p>The Consolidated Standards of Reporting Trials (CONSORT)은 임상시험 보고에 대한 권장 사항을 제공합니다.<a href="https://doi.org/10.1136/bmj.c332">[1]</a><br>
+<code>-</code> 임상시험에서 생존에 대해 치료 효과의 철저한 분석은 치료 효과의 상대적 및 절대적 측정치를 추정.</p>
+<section id="무작위-배정인-경우" class="level5">
+<h5 class="anchored" data-anchor-id="무작위-배정인-경우">1. 무작위 배정인 경우</h5>
+<blockquote class="blockquote">
+<p>절대적 추정치 : Kaplan-Meier Curve<br>
+상대적 추정치 : Cox proportional hazards model</p>
+</blockquote>
+</section>
+<section id="관측-연구" class="level5">
+<h5 class="anchored" data-anchor-id="관측-연구">2. 관측 연구</h5>
+<ul>
+<li>치료를 받은 그룹과 치료를 받지 않은 그룹 간에 기준선 특성의 분포에 시스템적인 존재 (bias from Counfounding)</li>
+<li>이러한 이유로 결과를 직접적으로 치료 그룹 간에 비교할 수 없습니다.</li>
+<li>따라서 관측 연구의 설계는 무작위 실험의 모습을 모방.</li>
+</ul>
+<p><code>-</code> 경향성 점수 방법 (Propensity score methods (PSM)) - 치료 그룹(exposure) 간에 측정된 기준선 특성의 분포 차이로 인해 발생할 수 있는 혼동 효과를 감소시킬 수 있습니다. - 무작위 배정과 유사하게, 측정된 기준선 공변량의 유사한 분포를 가진 치료된 그룹과 비치료된 그룹 간의 결과를 비교함으로써 혼동 효과를 제거합니다</p>
+<p>마치 CONSORT 문장이 RCT(임의 대조 실험)의 보고를 개선한 것처럼 <a href="https://jamanetwork.com/journals/jama/fullarticle/193739">[11]</a>, 우리의 목표는 관측 데이터를 사용하여 치료가 시간-사건 결과에 미치는 효과를 추정하는데 경향성 점수 방법을 사용하는 연구의 진행과 보고를 개선하는 방법을 설명하는 것이었습니다. 특히 절대적 및 상대적 치료 효과를 모두 추정하는 방법에 대해 설명하고 있습니다.</p>
+</section>
+</section>
+<section id="background" class="level3">
+<h3 class="anchored" data-anchor-id="background">2. Background</h3>
+<blockquote class="blockquote">
+<p>잠재 결과 프레임워크(potential outcomes framework)<br>
+평균 치료 효과(average treatment effects, ATEs)<br>
+주변(marginal) vs 조건부(conditional) 치료 효과</p>
+</blockquote>
+<section id="the-potential-outcomes-framework" class="level5">
+<h5 class="anchored" data-anchor-id="the-potential-outcomes-framework">2.1. The potential outcomes framework</h5>
+<ul>
+<li>두가지 치료 옵션이 있는 상황에서 각 개체가 두 개의 잠재결과를 가진다고 가정 Yi(0) 및 Yi(1).</li>
+<li>Yi(1) 은 outcome 발생, Yi(0)은 발생 X</li>
+<li>그러나 각 개체는 오직 두 가지 중 하나의 Yi만 선택 가능.</li>
+<li>생존 분석에서 잠재 결과는 치료 하에서 생존 또는 사건 발생 시간</li>
+</ul>
+</section>
+<section id="average-treatment-effects-ate" class="level5">
+<h5 class="anchored" data-anchor-id="average-treatment-effects-ate">2.2. Average treatment effects (ATE)</h5>
+<ul>
+<li><p>각 개체에 대해 치료의 효과는 Yi(1)-Yi(0)로 정의.</p></li>
+<li><p>E[Yi(1)-Yi(0)]로, 치료되지 않은 상태에서 치료된 상태로 전체 모집단을 이동시킬 때의 평균 효과를 나타냅니다 <a href="https://scholar.harvard.edu/imbens/publications/nonparametric-estimation-average-treatment-effects-under-exogeneity-review">[13]</a>.</p></li>
+<li><p>관련된 효과 측정값으로는 치료 대상자에 대한 평균 치료 효과 (ATT), E[Yi(1)-Yi(0) | 𝑍 = 1], 즉 궁극적으로 해당 치료를 받은 대상들에 대한 치료의 평균 효과.</p></li>
+<li><p>무작위 배정 하에 따르면 ATE는 E[Yi(1)] - E[Yi(0)] <a href="https://doi.org/10.1002/sim.1903">[14]</a></p></li>
+<li><p>따라서 E[Yi(1)-Yi(0)] = E[Yi(1)] - E[Yi(0)] 이므로, 무작위 대조 임상시험(RCT)에서 unadjusted analysis은 모집단 수준에서 평균 치료 효과를 편향되지 않게 추정할 수 있습니다.</p></li>
+<li><p>관측 연구에서는 ATT와 ATE가 항상 일치하는 것은 아님.</p></li>
+<li><p>전통적인 생존 분석에서, 주어진 대상에 대한 치료의 효과는 두 가지 잠재적 결과 간의 차이입니다. 따라서 평균 치료 효과는 치료로 인한 생존 시간의 평균 차이임. Yi(1)-Yi(0)</p></li>
+</ul>
+<p><code>-</code> 그러나 의학 연구자들은 종종 결과 발생의 위험에 대한 치료의 상대적 효과와 추적 기간 내 결과 발생 확률의 절대적 차이에 더 관심이 있습니다. 이러한 선호도를 반영하기 위해 현재 연구에서 ATE와 ATT의 정의를 수정합니다</p>
+<ul>
+<li><p>두 가지 잠재적으로 관측 가능한 생존 곡선을 개념화할 수 있습니다. 각 곡선은 잠재적 결과의 함수로, 첫 번째 모집단에서는 모든 대상이 치료를 받지 않았지만, 두 번째 모집단에서는 모든 대상이 치료를 받은 것을 나타냅니다. 이러한 잠재적으로 관측 가능한 생존 곡선을 비교하고 치료의 생존에 미치는 효과를 양적으로 평가하기 위해 두 가지 다른 지표를 사용할 수 있습니다. &gt; 첫째, 잠재적으로 관측 가능한 두 개의 생존 곡선 간 결과 발생의 확률적 절대 차이를 추정<br>
+&gt; 둘째, 두 가지 잠재 결과를 통합하여 결과 발생의 위험을 치료 상태를 나타내는 지표 변수에 회귀</p></li>
+<li><p>우리는 용어를 약간 수정하여 이러한 측정치를 ATE의 측정치로 참조합니다. 그런 다음 위의 분석을 최종적으로 치료받은 대상의 잠재 결과 집합으로 제한할 수 있습니다. 우리는 이러한 결과 측정치를 ATT의 측정치로 참조합니다</p></li>
+<li><p>평균 치료 효과의 개념은 중요합니다. 왜냐하면 일부 경향성 점수 방법은 ATE를 추정할 수 있도록 하고, 다른 방법은 ATT를 추정할 수 있도록 합니다.</p></li>
+</ul>
+</section>
+<section id="marginal-versus-conditional-treatment-effects-and-collapsibility" class="level5">
+<h5 class="anchored" data-anchor-id="marginal-versus-conditional-treatment-effects-and-collapsibility">2.3. Marginal versus conditional treatment effects and collapsibility</h5>
+<p><code>-</code> 조건부 치료 효과 - 개별 수준에서 치료 상태를 미치료에서 치료된 상태로 변경하는 것의 평균 효과 - 개별 수준에서의 평균 효과의 추정치는 종종 표본 내의 모든 대상에 대해 효과를 ‘스무딩’ 되어짐 - 치료 상태를 나타내는 지표 변수 및 기준선 공변량 집합에 의해 결과변수가 회귀되는 회귀 모델을 사용하여 수행됨. - 이러한 모델이 적합되면 치료 상태 지표 변수에 대한 회귀 계수는 (적절한 변환 후에) 조건부 치료 효과를 나타냄. - 예를 들어, 조정된 Cox 비례 위험 회귀 모델에서 유도된 회귀 계수를 지수화한 후에는 조건부 위험 비율을 나타냅니다: 치료로 인한 시간-사건 결과의 위험 변화 비율 - 따라서 회귀 모델에서 유도된 치료 효과의 추정치는 조건부 효과입니다: 개별 수준에서의 평균 효과, 즉 대상의 상태가 미치료에서 치료된 상태로 변경될 경우의 효과를 의미합니다.</p>
+<p><code>-</code> 주변부 치료 효과 - 인구 수준에서의 효과 - 치료 여부를 제외한 모든 기준선 공변량이 동일한 두개의 모집단 간의 결과 변수 차이 효과 - 이 정의에서 보듯이, 무작위 대조 실험은 주변 치료 효과를 추정하고 있습니다.</p>
+<ul>
+<li>특정 모집단에서는 회귀 모델에 포함된 각 공변량 집합마다 여러 조건부 효과가 있습니다.<br>
+</li>
+<li>이와 대조적으로 특정 모집단에서는 하나의 주변 효과만 있습니다. 그러나 서로 다른 모집단을 고려할 때 각각의 모집단마다 자체적인 주변 효과가 있을 수 있습니다.<br>
+</li>
+<li>여러 조건부 효과가 있지만, 우리는 실제 결과 회귀 모델에서 유도된 효과(주변효과)가 주요 관심 대상임을 주장할 수 있습니다</li>
+</ul>
+</section>
+</section>
+<section id="collapsible" class="level3">
+<h3 class="anchored" data-anchor-id="collapsible">Collapsible</h3>
+<ul>
+<li>치료 효과의 측정치는 혼동이 없는 경우 조건부 및 주변 효과 측정치가 일치할 경우 collapsible 이라고 함 <a href="https://doi.org/10.1093/oxfordjournals.aje.a114593">[15]</a></li>
+<li>평균 차이와 위험 차이는 축소 가능하지만, 오즈와 위험 비율은 축소 가능하지 않습니다 <a href="https://doi.org/10.1093/oxfordjournals.aje.a113225">[16]</a><a href="https://doi.org/10.1093/biomet/71.3.431">[17]</a>.</li>
+<li>따라서 일반적으로 RCT(임의 대조 실험)에서 평균 차이의 crude 값은 조정된 평균 차이와 일치할 것입니다. 그러나 이는 오즈 비나 위험 비율에는 적용되지 않습니다.</li>
+<li>이항 결과 및 로지스틱 회귀 모델의 경우, 조정된 오즈 비는 주변 오즈 비보다 체계적으로 영향을 받아 널뛰는 것을 보여주었습니다<a href="https://doi.org/10.2307/1403572">[18]</a></li>
+<li>치료 효과의 주변 및 조건부 추정치 개념을 이해하는 것은 중요합니다. 왜냐하면 경향성 점수 방법은 주변 효과를 추정하는 반면, 전통적인 회귀 조정은 조건부 효과를 추정합니다.</li>
+<li>어떤 효과 측정치가 축소 가능한지 알면 회귀 조정 및 경향성 점수 방법이 치료 효과의 추정치가 같게 나올 것으로 기대되는 상황을 이해하는 데 도움이 됩니다.</li>
+</ul>
+</section>
+<section id="propensity-score-methods-and-survival-outcomes" class="level3">
+<h3 class="anchored" data-anchor-id="propensity-score-methods-and-survival-outcomes">3. Propensity score methods and survival outcomes</h3>
+<ul>
+<li>경향 점수(Propensity score)는 관측된 기준 (baseline) 공변량 (X) : ei = Pr(Zi =1 | Xi)에 조건을 둔 상태에서 치료 (exposure) (Z = 1 vs.&nbsp;Z = 0)를 받을 확률</li>
+<li>균형 점수에 대한 조건부로, 측정된 기저 공변량의 분포는 치료를 받은 집단과 치료를 받지 않은 집단 간에 동일할 것으로 기대.</li>
+<li>랜덤화 임상시험(RCT)과 유사하게, 편향 점수 방법을 통해 조건부가 아닌 주변적인 치료 효과를 추정할 수 있습니다<a href="https://doi.org/10.1177/0962280216658920">[22]</a>. 이는 매칭, 계층화, 가중치 적용에서 명확히 확인할 수 있습니다: 동일한 관측된 기저 공변량 분포를 가진 치료 및 비치료 대상자 집단 간의 평균 결과를 비교하고 있는 것입니다.</li>
+</ul>
+<p><code>-</code> 3.1. Propensity score matching (PSM) - 경향 점수 값을 공유하는 치료 및 비치료 대상자의 매칭된 집합을 형성하는 것을 의미. - 매칭된 샘플이 형성되면, 매칭된 샘플 내에서 치료 및 비치료 대상자 간의 결과를 직접 비교함으로써 치료 효과를 추정할 수 있습니다. - 일반적인 경향 점수 매칭은 ATT(치료 효과 평균)를 추정하는 데 도움이 됩니다(쌍 (paired) 매칭은 ATT(처치의 평균 효과)를 추정). 이는 치료 대상 집단과의 유일한 체계적 차이점이 치료의 부재인 치료되지 않은 대상자의 샘플을 구성했기 때문에 알 수 있습니다. 따라서, 치료된 샘플과 기저선에서 치료된 대상과 동일해 보이는 치료되지 않은 대상자의 샘플 간의 결과를 비교할 수 있습니다. 치료된 대상(exposure)과 유사한 특성을 가진 대상의 샘플에서 치료 효과에 초점을 맞추면, ATT를 추정하는 것입니다 - 근데 ATT는 치료받은 대상자들이 모집단이라는데??</p>
+<ul>
+<li><p>시간-사건 형태의 결과가 있는 경우, 치료된 대상과 치료되지 않은 대상에 대한 Kaplan-Meier 생존 곡선을 경향 점수 매칭된 샘플에서 추정할 수 있습니다. 추정된 생존 곡선을 통해 매칭된 샘플 내에서 치료 그룹 간의 생존을 직접 비교할 수 있습니다. 이전에 제시한 주장을 기반으로 하면, 매칭된 치료 대상 샘플과 매칭된 치료되지 않은 대상 샘플을 두 개의 독립된 샘플로 다루는 것은 부적절하다고 생각합니다. 따라서, 경향 점수 매칭된 샘플에서 생존 곡선의 동일성을 검정하기 위해 로그-랭크 테스트가 자주 사용되지만 [9, 10, 35], 이러한 접근 방식은 샘플이 서로 독립적이어야 한다는 가정 때문에 부적절합니다 [36, 37]. 대신, 매칭된 샘플에서 생존 곡선의 동일성을 비교하기 위해 계층화된 로그-랭크 테스트를 사용할 수 있습니다 [36]. 매칭에 대한 고려 없이 다른 통계적 검정에서의 매칭의 영향을 조사한 몬테카를로 시뮬레이션을 사용한 연구를 통해, 로그-랭크 테스트의 사용은 아마도 인위적으로 낮은 유형 I 오류율을 초래할 것으로 보입니다 [31,32]. 그러나 이는 후속 연구에서 확인이 필요합니다.</p></li>
+<li><p>치료 상태를 생존에 대해 단변량 (univariate)Cox 비례위험 모형을 사용하여 회귀하면 결과의 위험의 상대적 변화를 추정할 수 있습니다. 샘플의 매칭된 특성을 고려하기 위해, 매칭된 집단 내에서의 클러스터링을 고려하는 강건한 분산 추정기를 사용할 수 있습니다 [38]. 또 다른 방법은 매칭된 집단에 계층화하는 것입니다 [39]. 그러나 최근 연구에 따르면, 전자의 접근 방식은 주변 위험 비율의 편향되지 않은 추정을 가능케 하지만, 후자의 방식은 주변 위험 비율의 편향된 추정을 초래한다는 것이 입증되었습니다 [30]. 전자의 접근 방식은 클러스터링을 고려하지 않는 일반적인 Cox 비례위험 모형에서 얻은 결과와 동등한 추정된 위험 비율을 제공하며, 이는 진정한 주변 모형입니다. 반면, 후자의 접근 방식은 매칭된 쌍을 조건으로 하는 것이기 때문에 조건적인 효과 추정으로 보입니다.</p></li>
+</ul>
+<p><code>-</code> 3.2. Inverse probability of treatment weighting using the propensity score</p>
+<p><code>-</code> 3.3. Other propensity score approaches</p>
+<p><code>-</code> 3.4. Comparison of different propensity score methods - 다양한 경향 점수 방법에 대한 간단한 비교를 제공하겠습니다. 여기서는 생존 결과의 치료 효과를 추정하는 데 국한하지 않겠습니다. 후반의 두 가지 방법은 경향 점수의 추정값을 직접적으로 사용하므로 추정된 경향 점수의 오용 또는 불안정성이 더 큰 영향을 미칠 수 있다는 제안이 있었습니다 [47]. 그에 반해, 전자의 두 방법은 경향 점수를 stratify하거나 match하는 데에는 사용하지만, 경향 점수는 치료 효과를 추정하는 데 직접적으로 관여하지는 않습니다. 경향 점수를 사용한 공변량 조정의 추가적인 비판점은 결과 회귀 모형이 올바르게 지정되었다는 가정이 필요하다는 것입니다. 경향 점수를 사용한 공변량 조정에 대한 균형 진단이 설명되었지만, 이러한 진단은 다른 세 가지 방법에 비해 덜 투명합니다 [48, 49]. 또한, 매칭, 계층화 및 가중화는 관측 연구의 설계를 관측 연구의 분석과 분리할 수 있습니다 [8]. 몬테카를로 시뮬레이션의 연구에 따르면, 경향 점수 매칭과 경향 점수를 사용한 역치료 확률 가중은 경향 점수에 대한 계층화 및 경향 점수를 사용한 공변량 조정과 비교하여 기준선 공변량의 균형을 더 잘 유지시키는 것으로 나타났습니다 [50]. 일반적인 경향 점수 매칭은 ATE(전체 효과)를 추정할 수 있지만, 계층화 및 역치료 확률 가중은 층화 또는 대상이 어떻게 가중되느냐에 따라 ATE 또는 ATT(치료 효과)를 추정할 수 있습니다. 경향 점수를 사용한 쌍 매칭은 치료되지 않은 대상자의 수가 치료 대상자의 수보다 많아야 하며 (가능하면 상당히 많아야 함), 이에 따라 두 개의 샘플이 거의 동일한 크기인 경우나 치료 대상자의 수가 치료되지 않은 대상자의 수보다 많은 경우에는 매칭이 잘 작동하지 않을 수 있습니다. 그러나 다른 세 가지 경향 점수 방법에는 이러한 제한이 없습니다. 마지막으로, 이 방법들의 상대적인 성능은 위험 차이 및 주변 위험 비율을 추정하는 데 있어서 다른 곳에서 보다 자세히 조사되었습니다 [51].</p>
+<p><code>-</code> 3.5. Sensitivity analyses</p>
+</section>
+<section id="discussion" class="level3">
+<h3 class="anchored" data-anchor-id="discussion">4. Discussion</h3>
+<ul>
+<li>CONSORT(Consolidated Standards of Reporting Trials) 문서는 이분법적 결과를 갖는 RCT(Randomized Controlled Trials)의 경우, 치료 효과의 상대적 및 절대적 측정치를 모두 보고할 것을 권장합니다 [1].</li>
+<li>우리는 관찰 연구에서 치료 효과의 추정은 유사한 설계의 RCT에서 수행될 분석을 반영해야 한다고 제안합니다.</li>
+<li>경향성 점수 방법은 치료받는 그룹과 치료받지 않는 그룹의 생존 곡선을 추정할 수 있게 합니다.</li>
+<li>이러한 주변 생존 곡선은 모든 대상이 치료를 받았을 때의 인구 내 생존 기능 또는 모든 대상이 치료를 받지 않았을 때의 인구 내 생존 기능을 반영합니다.</li>
+<li>경향성 점수 매칭이나 IPTW(Inverse Probability of Treatment Weighting)를 사용할 때, 생존을 치료 상태를 나타내는 지시 변수에 대한 Cox 비례 위험 모형을 사용하면 사건 발생의 위험의 상대적 감소를 추정할 수 있습니다.</li>
+<li>따라서 이러한 두 가지 경향성 점수 방법을 사용한 분석은 사건 발생 가능성의 절대 및 상대적 감소를 보고할 수 있으며, 이는 RCT에서 보고될 효과 측정치와 유사합니다.</li>
+<li>저희는 조건부 치료 효과의 추정치로 이어질 것으로 보이는 경향성 점수 방법의 사용을 권장하지 않았습니다.</li>
+<li>이는 조건부 효과 측정치가 주변 효과 측정치보다 덜 중요하다는 제안으로 오해되어서는 안 됩니다.</li>
+<li>오히려, 이러한 강조에는 세 가지 동기가 있습니다.</li>
+<li>첫째, 경향성 점수 방법은 주변 치료 효과를 추정하는 것이 목적입니다 [22].</li>
+<li>둘째, 경향성 점수에 대한 계층화와 경향성 점수를 사용한 공변량 조정은 예후에 중요한 모든 공변량을 조정하는 것으로 얻어질 조건부 위험 비율의 편향된 추정치를 낼 수 있습니다 [30].</li>
+<li>셋째, 우리는 RCT에서 보고되는 치료 효과를 추정할 수 있는 방법에 중점을 두었습니다.</li>
+<li>RCT에서 결과를 치료 상태에 대한 회귀 조정만으로 주변 위험 비율을 추정할 수 있습니다.</li>
+<li>따라서, 우리는 경향성 점수에 대한 계층화 및 경향성 점수를 사용한 공변량 조정을 피하도록 권장했습니다.</li>
+<li>조건부 추정치가 주변 효과와 비교했을 때 추정된 치료 효과의 크기가 확대될 경우, 의학적 의사 결정 및 정책 결정에 중요한 영향을 미칠 수 있습니다.</li>
+<li>예를 들어, 인구 수준에서 치료나 노출의 영향을 해석할 때, 조건부 추정치의 사용은 치료의 이점이나 노출의 해로운 영향을 과대평가할 수 있습니다.</li>
+<li>이로 인해 후속적으로 자원 낭비가 발생할 수 있습니다.</li>
+<li>앞서 언급한 바와 같이, 주어진 인구에 대해 여러 가지 조건부 효과가 있습니다.</li>
+<li>경향성 점수를 조정하여 얻은 조건부 위험 비율은 결과와 관련된 공변량을 직접 조정하여 얻은 조건부 위험 비율과 다를 수 있습니다(일부 보조 분석에서 조건부 위험 비율 추정 시 이러한 차이가 관찰되었습니다) [46].</li>
+<li>경향성 점수를 사용한 공변량 조정이나 경향성 점수에 대한 계층화를 통해 얻은 조건부 위험 비율이 관심 있는 주요 조건부 위험 비율과 어떻게 관련되어 있는지는 명확하지 않습니다.</li>
+<li>이 문제를 해결하기 위해 추가 연구가 필요합니다. 많은 경우에 주요한 관심 있는 조건부 위험 비율은 결과를 치료 상태를 나타내는 지시 변수와 모든 측정된 공변량(중간 수의 공변량 집합을 가정함)에 대해 회귀하고, 연속적인 공변량을 결과의 로그-위험과 관련시키기 위해 유연한 smoothing 방법을 사용하는 것이 최선으로 보입니다.</li>
+<li>치료의 생존 결과에 대한 효과를 추정할 때, 연구자들에게 경향성 점수 매칭 또는 경향성 점수를 사용한 역확률 가중치를 사용하도록 권장합니다.</li>
+<li>이 두 가지 방법 각각의 장단점이 있습니다. 매칭의 장점은 가중치를 생성하는 방식에 의존하는 가중치보다 더 투명하다고 인식될 수 있다는 것입니다. 또한, 가중치는 경향성 점수의 잘못된 명시에 더 민감할 수 있습니다 [47].</li>
+<li>일반적인 매칭의 단점은 ATT(처치의 평균 효과)를 추정하는 데 제한된다는 것인데, 반면에 가중치는 선택한 가중치에 따라 ATE(전체 평균 효과) 또는 ATT를 추정할 수 있습니다.</li>
+<li>연구의 맥락에 따라 이 중 하나가 다른 것보다 더 유용하고 정보를 제공할 수 있습니다.</li>
+<li>일부 경우에 연구자는 효과의 두 가지 측정치를 모두 보고하길 원할 수 있습니다.</li>
+<li>최근 연구에 따르면 가중치와 매칭은 치료를 받은 그룹과 받지 않은 그룹 간의 체계적인 차이를 거의 동등한 정도로 제거한다는 것이 입증되었습니다 [50].</li>
+<li>경향성 점수 가중치의 장점은 이 방법이 시간 변동 노출 및 시간 변동 혼입 변수를 고려할 수 있는 보다 일반적인 모델인 주변 구조 모델(Marginal Structural Models)의 하위 클래스임을 의미합니다.</li>
+<li>따라서 가중치는 보다 복잡한 연구 설계와 연구 문제를 검토할 수 있는 방식으로 일반화됩니다.</li>
+<li>그러나, Lu는 치료가 시간에 따라 변하는 경우나 기준선에서 고정되지 않을 때 전통적인 경향성 점수 방법을 확장했다는 점에 주목해야 합니다 [64].</li>
+<li>매칭의 잠재적인 한계는 이상적으로 치료 대상보다 적어도 동일한 규모의 잠재적 대조군이 필요하다는 것입니다.</li>
+<li>일부 연구 상황에서는 치료 대상의 수가 비치료 대상의 수를 초과할 수 있습니다. 매칭과 가중치의 비교를 마무리하면, 일반적으로 어느 방법이 다른 방법보다 명확히 우월하다고 할 수는 없으며, 각 방법의 상대적인 강점과 한계가 선택하는 방법에 고려되어야 합니다.</li>
+<li>일부 상황에서 한 가지 방법이 다른 방법보다 명확한 장점을 가질 수 있습니다.</li>
+<li>앞서 언급했듯이, 캘리퍼 매칭과 최적 매칭을 선택하는 데에는 트레이드오프가 있습니다.</li>
+<li>캘리퍼 매칭은 치료 대상과 미치료 대상 간의 체계적인 차이를 더 크게 제거할 것으로 예상되지만, 불완전한 매칭으로 인한 편향을 도입할 수 있습니다.</li>
+<li>저희 주요한 매칭 분석에서 (약 20%의 치료 대상이 제외된) 추정된 위험 비율은 0.855였으며, 모든 치료 대상을 포함한 최적 매칭을 사용한 분석에서는 0.909였습니다.</li>
+<li>Figure 1의 이러한 분석을 비교하는 것이 유익합니다. 최적 매칭을 사용하여 생성된 표본에서 추정된 생존 곡선은 ATT 가중치를 사용한 가중치 계산된 생존 곡선과 매우 유사합니다.</li>
+<li>그러나 캘리퍼 매칭을 사용하여 생성된 매칭 표본의 미치료 대상 생존 곡선은 다른 두 방법을 사용하여 얻은 해당 곡선과 다릅니다.</li>
+<li>특히, 캘리퍼 매칭을 사용한 표본의 미치료 대상의 생존율은 최적 매칭을 사용한 표본 및 ATT 가중치를 사용한 표본에 비해 약간 나빴습니다. 캘리퍼 매칭을 사용한 결과는 다른 두 ATT 분석 결과와 비교했을 때, 치료 대상과 퇴행된 예후를 가진 통제 또는 미치료 대상의 생존을 비교하도록 이끌었습니다.</li>
+<li>이러한 분석 결과는 캘리퍼 매칭을 사용한 결과가 다른 두 ATT 분석보다 더 많은 편향의 영향을 받을 수 있다는 것을 시사합니다.</li>
+<li>CONSORT(임상시험보고기준)는 무작위 대조 연구(RCTs)의 보고를 개선했습니다 [11]</li>
+<li>본 논문에서 설명된 방법을 준수하면 치료의 효과를 추정하기 위해 경향성 점수 방법을 사용하는 연구의 수행 및 보고가 개선될 것입니다</li>
+<li>결과가 시간에 따라 발생하는 경우, 우리는 다음과 같은 이유로 경향성 점수 매칭 또는 경향성 점수를 사용한 역확률 치료 가중치를 권장합니다</li>
+<li>첫째, 이 방법들은 치료받은 그룹과 치료받지 않은 그룹의 생존 함수를 추정할 수 있게 합니다</li>
+<li>이러한 생존 함수에서 특정 추적 기간 내에 사건 발생의 절대 감소를 계산할 수 있습니다</li>
+<li>둘째, 이러한 각각의 방법은 주변 위험 비율을 추정할 수 있도록 해줍니다. 이는 치료를 받은 인구와 치료를 받지 않은 인구 간 사건 발생 위험의 상대적 감소를 정량화할 수 있습니다</li>
+<li>이러한 방법을 사용하면 관찰 연구에서 절대적 및 상대적 효과 측정치를 모두 보고함으로써 RCTs의 보고를 모방할 수 있을 것입니다</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
